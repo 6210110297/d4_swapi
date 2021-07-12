@@ -79,7 +79,15 @@ class _StarwarsListState extends State<StarwarsList> {
       key: ValueKey(people),
       child: Container(
         height: 50,
-        child: Text(people.name),
+        child: Row(
+          children: [
+            Container(
+                margin: EdgeInsets.only(left: 15),
+                child: Text(people.imageUrl)),
+            Container(
+                margin: EdgeInsets.only(left: 15), child: Text(people.name)),
+          ],
+        ),
       ),
     );
   }

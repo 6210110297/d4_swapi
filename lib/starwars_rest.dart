@@ -2,10 +2,29 @@ import 'package:dio/dio.dart';
 
 class People {
   final String name;
-  People({this.name = ''});
+  final String height;
+  final String mass;
+  final String gender;
+  final String imageUrl;
+
+  People({
+    this.name = '',
+    this.height = '',
+    this.mass = '',
+    this.gender = '',
+    this.imageUrl = '',
+  });
 
   factory People.fromJson(Map<String, dynamic> data) {
-    return People(name: data['name']);
+    var pplId = data['url']?.toString().split('/')[5];
+    var url =
+        'https://starwars-visualguide.com/assets/img/characters/$pplId.jpg';
+    return People(
+        name: data['name'],
+        height: data['height'],
+        mass: data['mass'],
+        gender: data['gender'],
+        imageUrl: url);
   }
 }
 
