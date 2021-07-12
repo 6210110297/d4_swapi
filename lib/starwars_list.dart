@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:d4_swapi/starwars_rest.dart';
 import 'package:easy_debounce/easy_debounce.dart';
 import 'package:flutter/cupertino.dart';
@@ -46,8 +47,9 @@ class _StarwarsListState extends State<StarwarsList> {
     _scrollController.addListener(() {
       double maxPosition = _scrollController.position.maxScrollExtent;
       double currentPosition = _scrollController.position.pixels;
+      double different = 20.0;
 
-      if (maxPosition == currentPosition) {
+      if (maxPosition - currentPosition <= different) {
         EasyDebounce.debounce('scrolling', Duration(microseconds: 275), () {
           fetchPeople();
           print('refetch');
@@ -78,17 +80,34 @@ class _StarwarsListState extends State<StarwarsList> {
     return Card(
       key: ValueKey(people),
       child: Container(
-        height: 50,
+        height: 150,
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             Container(
-                margin: EdgeInsets.only(left: 15),
-                child: Text(people.imageUrl)),
-            Container(
-                margin: EdgeInsets.only(left: 15), child: Text(people.name)),
+                child: CachedNetworkImage(
+              imageUrl: people.imageUrl,
+              placeholder: (context, url) => CircularProgressIndicator(),
+              errorWidget: (context, url, error) => Text('unloading picture'),
+            )),
+            Row(children: [Text(people.name), Icon(Icons.height)]),
+            Container(child: Text(people.height)),
+            Container(child: Icon(Icons.monitor_weight)),
+            Container(child: Text(people.mass)),
+            Container(child: genderIcon(people.gender)),
           ],
         ),
       ),
     );
+  }
+
+  Widget genderIcon(String gender) {
+    if (gender == 'male') {
+      return Icon(Icons.male);
+    } else if (gender == 'female') {
+      return Icon(Icons.female);
+    } else {
+      return Icon(Icons.blur_on);
+    }
   }
 }

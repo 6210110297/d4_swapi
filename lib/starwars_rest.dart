@@ -32,7 +32,7 @@ class StarwarsRest {
   Future<List<People>> fetchPeople({int page = 1}) async {
     var response = await Dio().get('https://swapi.dev/api/people?page=$page');
     List<dynamic> results = response.data['results'];
-    print('fetch ${results.toString()}');
+    // print('fetch ${results.toString()}');
     return results.map((data) => People.fromJson(data)).toList();
   }
 }
