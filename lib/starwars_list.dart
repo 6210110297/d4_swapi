@@ -47,37 +47,45 @@ class _StarwarsListState extends State<StarwarsList> {
     _scrollController.addListener(() {
       double maxPosition = _scrollController.position.maxScrollExtent;
       double currentPosition = _scrollController.position.pixels;
-      double different = 20.0;
 
-      if (maxPosition - currentPosition <= different) {
-        EasyDebounce.debounce('scrolling', Duration(microseconds: 275), () {
+      if (maxPosition == currentPosition) {
+        EasyDebounce.debounce('scrolling', Duration(microseconds: 300), () {
           fetchPeople();
           print('refetch');
         });
       }
     });
-    return ListView(
-      shrinkWrap: true,
-      controller: _scrollController,
-      children: <Widget>[
-        for (int i = 0; i < _people.length; i++) buildCard(_people[i]),
-        Visibility(
-          visible: _reload,
-          child: Center(
-            child: SizedBox(
-              height: 25,
-              width: 25,
-              child: CircularProgressIndicator(),
+    return Container(
+      decoration: BoxDecoration(
+          image: _reload && _page == 1
+              ? null
+              : DecorationImage(
+                  fit: BoxFit.cover, image: AssetImage('bg.jpg'))),
+      child: ListView(
+        shrinkWrap: true,
+        controller: _scrollController,
+        children: <Widget>[
+          for (int i = 0; i < _people.length; i++) buildCard(_people[i]),
+          Visibility(
+            visible: _reload,
+            child: Center(
+              child: SizedBox(
+                height: 25,
+                width: 25,
+                child: CircularProgressIndicator(),
+              ),
             ),
+            replacement: Container(),
           ),
-          replacement: Container(),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
   Widget buildCard(People people) {
     return Card(
+      color: Colors.grey[200],
+      margin: EdgeInsets.all(10),
       key: ValueKey(people),
       child: Container(
         height: 150,
@@ -86,14 +94,26 @@ class _StarwarsListState extends State<StarwarsList> {
           children: [
             Container(
                 child: CachedNetworkImage(
+              fit: BoxFit.fill,
               imageUrl: people.imageUrl,
-              placeholder: (context, url) => CircularProgressIndicator(),
+
+              // placeholder: (context, url) => Container(
+              //     color: Colors.grey, child: CircularProgressIndicator()),
               errorWidget: (context, url, error) => Text('unloading picture'),
             )),
-            Row(children: [Text(people.name), Icon(Icons.height)]),
-            Container(child: Text(people.height)),
-            Container(child: Icon(Icons.monitor_weight)),
-            Container(child: Text(people.mass)),
+            Container(
+                child: Text(
+              people.name,
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
+              ),
+            )),
+            Row(children: [
+              Icon(Icons.height),
+              Text(people.height),
+            ]),
+            Row(children: [Icon(Icons.monitor_weight), Text(people.mass)]),
             Container(child: genderIcon(people.gender)),
           ],
         ),
